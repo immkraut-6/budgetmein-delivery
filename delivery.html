@@ -61,7 +61,7 @@ function ensureDeliveryAuth(){
 async function tg(chatId,text){
   // Map chatId to kind for /api/telegram
   let kind="order";
-  if(chatId===TG_DELIVERY_GROUP) kind="customer";
+  if(chatId===TG_DELIVERY_GROUP) kind="delivery";
   try{
     await fetch("/api/telegram",{
       method:"POST",headers:{"Content-Type":"application/json"},
