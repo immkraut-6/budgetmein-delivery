@@ -26,7 +26,7 @@ const db=getFirestore(fbApp);
 const auth=getAuth(fbApp);
 
 // Telegram — Owner notifications
-const TG_TOKEN="8601047628:AAFEajOzNt53lFCaTdEfPJjud9bB-SQp-UI";
+// SECURE: Token is in Vercel Environment Variables — not here
 const TG_ORDER_GROUP="-5047049397";
 const TG_DELIVERY_GROUP="-5253137106";
 const DELIVERY_SUPPORT_PHONE="+91 9625867683";
@@ -61,9 +61,9 @@ function ensureDeliveryAuth(){
 
 async function tg(chatId,text){
   try{
-    await fetch("https://api.telegram.org/bot"+TG_TOKEN+"/sendMessage",{
+    await fetch("/api/telegram-delivery",{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({chat_id:chatId,parse_mode:"HTML",text:text,disable_web_page_preview:true})
+      body:JSON.stringify({chatId:chatId,text:text})
     });
   }catch(e){}
 }
