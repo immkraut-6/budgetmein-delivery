@@ -70,8 +70,8 @@ async function tg(chatId,text){
 
 window.syncBoyProfileToCloud = async function(profile){
   if(!profile||!profile.id)return;
-  await ensureDeliveryAuth();
-  await setDoc(doc(db,'deliveryBoys',profile.id),{
+  var user=await ensureDeliveryAuth();
+  var data={
     id:profile.id,
     name:profile.name||'',
     phone:profile.phone||'',
@@ -83,7 +83,12 @@ window.syncBoyProfileToCloud = async function(profile){
     pendingPayAmount:0,
     active:true,
     updatedAt:Date.now()
-  },{merge:true});
+  };
+  try{await setDoc(doc(db,'deliveryBoys',profile.id),data,{merge:true});}catch(e){}
+  // ✅ FIX: Also save under Firebase auth.uid so Firestore rule exists() check passes
+  if(user&&user.uid){
+    await setDoc(doc(db,'deliveryBoys',user.uid),{linkedId:profile.id,isDeliveryBoy:true,updatedAt:Date.now()},{merge:true});
+  }
 }
 
 // Anonymous auth for Firestore rules
