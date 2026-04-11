@@ -98,6 +98,7 @@ window._boyCloudState=null;
 window.loadDeliveryOrders=async function(){
   var boy=getBoyProfile();
   if(!boy)return;
+  await ensureDeliveryAuth(); // ✅ FIX: wait for anonymous auth before ANY Firestore call
   try{
     var boyCloud=null;
     try{
@@ -942,7 +943,7 @@ function updateProfileStats(){
   var boy=getBoyProfile();
   if(!boy||!window._db)return;
   import("https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js").then(function(mod){
-    mod.getDocs(mod.collection(window._db,"orders")).then(function(snap){
+    var myQ=mod.query(mod.collection(window._db,"orders"),mod.where("assignedTo","==",boy.id),mod.where("status","==","Delivered"));mod.getDocs(myQ).then(function(snap){
       var all=[];
       snap.forEach(function(d){all.push(d.data());});
       // Only my delivered orders
